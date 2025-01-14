@@ -3,28 +3,32 @@ package com.example.lkdientu.models;
 public class Product {
     private int productID;
     private String productName;
-    private String productCatalog;
-    private String productDescription;
-    private String productInformation;
+    private String describeProduct;
     private String image;
+    private String productInformation;
     private int quantity;
     private double price;
     private double sale;
-    private int hide;
+    private boolean hide;
+    private ProductCatalog productCatalog;
 
-    public Product(int productID, String productName, String productCatalog, String productDescription, String productInformation, String image, int quantity, double price, double sale, int hide) {
+    public Product() {
+    }
+
+    public Product(int productID, String productName, String describeProduct, String image, String productInformation, int quantity, double price, double sale, boolean hide, ProductCatalog productCatalog) {
         this.productID = productID;
         this.productName = productName;
-        this.productCatalog = productCatalog;
-        this.productDescription = productDescription;
-        this.productInformation = productInformation;
+        this.describeProduct = describeProduct;
         this.image = image;
+        this.productInformation = productInformation;
         this.quantity = quantity;
         this.price = price;
         this.sale = sale;
         this.hide = hide;
+        this.productCatalog = productCatalog;
     }
 
+    // Getters và Setters
     public int getProductID() {
         return productID;
     }
@@ -41,28 +45,12 @@ public class Product {
         this.productName = productName;
     }
 
-    public String getProductCatalog() {
-        return productCatalog;
+    public String getDescribeProduct() {
+        return describeProduct;
     }
 
-    public void setProductCatalog(String productCatalog) {
-        this.productCatalog = productCatalog;
-    }
-
-    public String getProductDescription() {
-        return productDescription;
-    }
-
-    public void setProductDescription(String productDescription) {
-        this.productDescription = productDescription;
-    }
-
-    public String getProductInformation() {
-        return productInformation;
-    }
-
-    public void setProductInformation(String productInformation) {
-        this.productInformation = productInformation;
+    public void setDescribeProduct(String describeProduct) {
+        this.describeProduct = describeProduct;
     }
 
     public String getImage() {
@@ -71,6 +59,14 @@ public class Product {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getProductInformation() {
+        return productInformation;
+    }
+
+    public void setProductInformation(String productInformation) {
+        this.productInformation = productInformation;
     }
 
     public int getQuantity() {
@@ -97,12 +93,19 @@ public class Product {
         this.sale = sale;
     }
 
-    public int getHide() {
+    public boolean isHide() {
         return hide;
     }
 
-    public void setHide(int hide) {
+    public void setHide(boolean hide) {
         this.hide = hide;
     }
-}
 
+    public ProductCatalog getProductCatalog() {
+        return productCatalog;
+    }
+
+    public void setProductCatalog(ProductCatalog productCatalog) {
+        this.productCatalog = productCatalog;
+    }
+}

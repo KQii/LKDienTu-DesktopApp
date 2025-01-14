@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
@@ -9,9 +10,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lkdientu.controllers.AddProductModalController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lkdientu.controllers.UpdateProductModalController">
    <children>
-      <Label layoutX="215.0" layoutY="25.0" text="THÊM SẢN PHẨM">
+      <Label layoutX="188.0" layoutY="22.0" text="CHỈNH SỬA SẢN PHẨM">
          <font>
             <Font name="System Bold" size="20.0" />
          </font>
@@ -46,7 +47,7 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <Label layoutX="356.0" layoutY="406.0" text="Giảm giá:">
+      <Label layoutX="344.0" layoutY="406.0" text="Giảm giá:">
          <font>
             <Font size="14.0" />
          </font>
@@ -61,9 +62,10 @@
       <TextArea fx:id="txtProductInformation" layoutX="165.0" layoutY="237.0" prefHeight="54.0" prefWidth="407.0" promptText="Nhập thông tin sản phẩm" />
       <Spinner fx:id="inputQuantity" editable="true" layoutX="117.0" layoutY="404.0" prefHeight="25.0" prefWidth="59.0" />
       <TextField fx:id="txtPrice" layoutX="232.0" layoutY="404.0" prefHeight="25.0" prefWidth="90.0" promptText="VND" />
-      <TextField fx:id="txtSale" layoutX="423.0" layoutY="404.0" prefHeight="25.0" prefWidth="90.0" promptText="\%" />
-      <Button fx:id="btnSave" layoutX="165.0" layoutY="449.0" mnemonicParsing="false" text="Thêm sản phẩm" />
-      <Button fx:id="btnClose" layoutX="359.0" layoutY="449.0" mnemonicParsing="false" text="Đóng" />
+      <TextField fx:id="txtSale" layoutX="411.0" layoutY="404.0" prefHeight="25.0" prefWidth="90.0" promptText="\%" />
+      <Button fx:id="btnSave" layoutX="183.0" layoutY="449.0" mnemonicParsing="false" text="Cập nhật" />
+      <Button fx:id="btnClose" layoutX="377.0" layoutY="449.0" mnemonicParsing="false" text="Đóng" />
       <ComboBox fx:id="cmbProductCatalog" layoutX="165.0" layoutY="112.0" prefWidth="150.0" promptText="Chọn danh mục" />
+      <CheckBox fx:id="checkHide" layoutX="520.0" layoutY="408.0" mnemonicParsing="false" text="Hiển thị" />
    </children>
 </AnchorPane>

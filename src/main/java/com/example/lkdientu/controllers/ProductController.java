@@ -1,39 +1,60 @@
 package com.example.lkdientu.controllers;
 
 import com.example.lkdientu.LKDienTuApplication;
+import com.example.lkdientu.models.ApiResponse;
 import com.example.lkdientu.models.Product;
+import com.example.lkdientu.models.ProductCatalog;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+import java.util.List;
+
 public class ProductController {
-    @FXML
-    private Button btnHomePage;
+    private String API_URL = "http://127.0.0.1:3000/api/v2/products/";
 
     @FXML
-    private Button btnProductPage;
+    private Button btnLoc;
 
     @FXML
-    private Button btnAddProduct;
+    private Button btnRefresh;
 
     @FXML
-    private TableColumn<Product, Integer> colHide;
+    private Button btnSua;
+
+    @FXML
+    private Button btnThem;
+
+    @FXML
+    private Button btnTimKiem;
+
+    @FXML
+    private Button btnUndo;
+
+    @FXML
+    private Button btnXoa;
+
+    @FXML
+    private TableColumn<Product, Boolean> colHide;
 
     @FXML
     private TableColumn<Product, String> colImage;
@@ -63,168 +84,188 @@ public class ProductController {
     private TableColumn<Product, Double> colSale;
 
     @FXML
-    private TableColumn<Product, String> colActions;
-
-    @FXML
-    private TabPane tabPane;
-
-    @FXML
-    private Tab tabHomePage;
-
-    @FXML
-    private Tab tabProductPage;
-
-    @FXML
     private TableView<Product> tableProduct;
+
+    @FXML
+    private TextField txtID;
+
+    @FXML
+    private TextField txtPrice;
+
+    @FXML
+    private TextArea txtProductDescription;
+
+    @FXML
+    private TextArea txtProductInformation;
+
+    @FXML
+    private TextArea txtProductName;
+
+    @FXML
+    private TextField txtTimKiem;
+
+    @FXML
+    private Spinner<Integer> spnQuantity;
+
+    @FXML
+    private CheckBox chkHide;
+
+    @FXML
+    private ComboBox<String> cmbProductCatalog;
 
     private ObservableList<Product> productList = FXCollections.observableArrayList();
 
+    private ObservableList<String> productCatalogList = FXCollections.observableArrayList();
+
     @FXML
     public void initialize() {
-        tabPane.getTabs().remove(tabProductPage);
+        System.out.println("ProductController loaded");
 
-        btnHomePage.setOnAction(e -> {
-            tabPane.getSelectionModel().select(tabHomePage);
-        });
+        // Initialize ValueFactory for Spinner
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 0);
+        spnQuantity.setValueFactory(valueFactory);
 
-        btnProductPage.setOnAction(e -> {
-            if (!tabPane.getTabs().contains(tabProductPage)) {
-                tabPane.getTabs().add(tabProductPage);
+        cmbProductCatalog.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                System.out.println("Selected: " + newValue); // Log ra mục được chọn
             }
-            tabPane.getSelectionModel().select(tabProductPage);
         });
 
-        btnAddProduct.setOnAction(e -> openAddProductModal());
 
-        colProductID.setCellValueFactory(new PropertyValueFactory<Product, Integer>("productID"));
-        colProductName.setCellValueFactory(new PropertyValueFactory<Product, String>("productName"));
-        colProductCatalog.setCellValueFactory(new PropertyValueFactory<Product, String>("productCatalog"));
-        colProductDescription.setCellValueFactory(new PropertyValueFactory<Product, String>("productDescription"));
-        colProductInformation.setCellValueFactory(new PropertyValueFactory<Product, String>("productInformation"));
-        colImage.setCellValueFactory(new PropertyValueFactory<Product, String>("image"));
-        colQuantity.setCellValueFactory(new PropertyValueFactory<Product, Integer>("quantity"));
-        colPrice.setCellValueFactory(new PropertyValueFactory<Product, Double>("price"));
-        colSale.setCellValueFactory(new PropertyValueFactory<Product, Double>("sale"));
-        colHide.setCellValueFactory(new PropertyValueFactory<Product, Integer>("hide"));
+        // Gắn các cột trong TableView với thuộc tính của Product
+        colProductID.setCellValueFactory(new PropertyValueFactory<>("productID"));
+        colProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        colProductDescription.setCellValueFactory(new PropertyValueFactory<>("describeProduct"));
+        colImage.setCellValueFactory(new PropertyValueFactory<>("image"));
+        colProductInformation.setCellValueFactory(new PropertyValueFactory<>("productInformation"));
+        colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        colSale.setCellValueFactory(new PropertyValueFactory<>("sale"));
+        colHide.setCellValueFactory(new PropertyValueFactory<>("hide"));
+//        colProductCatalog.setCellValueFactory(new PropertyValueFactory<>("productCatalog"));
+        colProductCatalog.setCellValueFactory(cellData -> {
+            ProductCatalog catalog = cellData.getValue().getProductCatalog();
+            return new SimpleStringProperty(catalog != null ? catalog.getProductCatalogName() : "N/A");
+        });
 
-        // Tải dữ liệu từ API
-        loadProductsFromAPI("http://localhost:3000/api/v1/products/?limit=100", "GET");
-
-        // Đưa dữ liệu vào TableView
+        // Gắn ObservableList vào TableView
         tableProduct.setItems(productList);
 
-        // Tạo cột Action với nút sửa và xóa
-        colActions.setCellFactory(new Callback<TableColumn<Product, String>, TableCell<Product, String>>() {
-            @Override
-            public TableCell<Product, String> call(TableColumn<Product, String> param) {
-                return new TableCell<Product, String>() {
-                    private final Button btnEdit = new Button("Sửa");
-                    private final Button btnDelete = new Button("Xóa");
+        // Gọi API để lấy dữ liệu
+        fetchProducts();
 
-                    {
-                        btnEdit.setOnAction(e -> {
-                            Product product = getTableRow().getItem();
-                            if (product != null) {
-                                // Xử lý sửa sản phẩm
-                                System.out.println("Edit product: " + product.getProductName());
-                            }
-                        });
+        // Fill combobox
+        fetchProductCatalogs();
 
-                        btnDelete.setOnAction(e -> {
-                            Product product = getTableRow().getItem();
-                            if (product != null) {
-                                // Xử lý xóa sản phẩm
-                                System.out.println("Delete product: " + product.getProductName());
-                                tableProduct.getItems().remove(product);
-                            }
-                        });
-                    }
-
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            // Đặt các nút vào mỗi ô của cột Action
-                            HBox hbox = new HBox(10, btnEdit, btnDelete);
-                            setGraphic(hbox);
-                        }
-                    }
-                };
+        // Thêm listener cho TableView
+        tableProduct.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                populateFields(newValue); // Gọi phương thức để đổ dữ liệu vào các trường
             }
         });
     }
 
-    private void loadProductsFromAPI(String apiUrl, String method) {
+    public void fetchProducts() {
         try {
-            // URL của API
-            URL url = new URL(apiUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod(method);
-            conn.setRequestProperty("Accept", "application/json");
+            // Tạo HttpClient
+            HttpClient client = HttpClient.newHttpClient();
 
-            if (conn.getResponseCode() != 200) {
-                throw new RuntimeException("HTTP GET Request Failed with Error Code : " + conn.getResponseCode());
-            }
+            // Tạo HttpRequest
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_URL)) // URL của API
+                    .GET()
+                    .build();
 
-            // Đọc dữ liệu JSON trả về
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder jsonBuilder = new StringBuilder();
-            String output;
-            while ((output = br.readLine()) != null) {
-                jsonBuilder.append(output);
-            }
+            // Gửi request và nhận response
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            conn.disconnect();
+            // Kiểm tra trạng thái
+            if (response.statusCode() == 200) {
+                // Parse JSON thành ApiResponse
+                ObjectMapper objectMapper = new ObjectMapper();
+                ApiResponse apiResponse = objectMapper.readValue(response.body(), ApiResponse.class);
 
-            // Parse JSON
-            JSONObject jsonResponse = new JSONObject(jsonBuilder.toString());
-            JSONArray products = jsonResponse.getJSONObject("data").getJSONArray("products");
+                // Lấy danh sách sản phẩm từ ApiResponse
+                List<Product> products = apiResponse.getData().getProducts();
 
-            // Duyệt qua danh sách sản phẩm và thêm vào ObservableList
-            for (int i = 0; i < products.length(); i++) {
-                JSONObject product = products.getJSONObject(i);
-
-                int productID = product.getInt("ProductID");
-                String productName = product.getString("ProductName");
-                String productCatalog = product.getJSONObject("ProductCatalog").getString("ProductCatalogName");
-                String productDescription = product.getString("DescribeProduct");
-                String productInformation = product.optString("Product_Information", "Empty");
-                String image = product.getString("Image");
-                int quantity = product.getInt("Quantity");
-                double price = product.getDouble("Price");
-                double sale = product.getDouble("Sale");
-                int hide = product.getInt("Hide");
-
-                productList.add(new Product(productID, productName, productCatalog, productDescription, productInformation, image, quantity, price, sale, hide));
+                // Cập nhật dữ liệu vào ObservableList
+                productList.setAll(products);
+            } else {
+                System.out.println("Lỗi API: " + response.statusCode());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void openAddProductModal() {
+    public void fetchProductCatalogs() {
+        String catalogApiUrl = "http://127.0.0.1:3000/api/v1/productCatalogs/"; // Thay bằng API thực tế
+
         try {
-            // Nạp FXML cho cửa sổ modal
-            FXMLLoader loader = new FXMLLoader(LKDienTuApplication.class.getResource("addProductModal-view.fxml"));
-            Parent modalRoot = loader.load();
+            // Tạo HttpClient
+            HttpClient client = HttpClient.newHttpClient();
 
-            // Tạo Stage mới cho modal
-            Stage modalStage = new Stage();
-            modalStage.setTitle("Thêm Sản Phẩm");
-            modalStage.initModality(Modality.APPLICATION_MODAL); // Chặn giao diện khác khi modal mở
-            modalStage.setResizable(false);
-            modalStage.setScene(new Scene(modalRoot));
+            // Tạo HttpRequest
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(catalogApiUrl)) // URL của API
+                    .GET()
+                    .build();
 
-            // Thiết lập controller cho modal
-            AddProductModalController controller = loader.getController();
-            controller.setModalStage(modalStage);
+            // Gửi request và nhận response
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            // Hiển thị modal
-            modalStage.showAndWait();
+            // Kiểm tra trạng thái
+            if (response.statusCode() == 200) {
+                // Parse JSON thành danh sách ProductCatalog
+                ObjectMapper objectMapper = new ObjectMapper();
+                ApiResponse apiResponse = objectMapper.readValue(response.body(), ApiResponse.class);
+
+                // Lấy danh sách ProductCatalog từ ApiResponse
+                List<ProductCatalog> catalogs = apiResponse.getData().getProductCatalogs();
+
+                // Cập nhật productCatalogList
+                productCatalogList.clear();
+                for (ProductCatalog catalog : catalogs) {
+                    // Nếu không có childs, thêm tên parent
+                    if (catalog.getChilds().isEmpty()) {
+                        productCatalogList.add(catalog.getProductCatalogName());
+                    } else {
+                        // Nếu có childs, thêm tên parent - child
+                        for (ProductCatalog child : catalog.getChilds()) {
+                            productCatalogList.add(catalog.getProductCatalogName() + " - " + child.getProductCatalogName());
+                        }
+                    }
+                }
+
+                // Gắn danh sách vào ComboBox
+                cmbProductCatalog.setItems(productCatalogList);
+            } else {
+                System.out.println("Lỗi API: " + response.statusCode());
+            }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void populateFields(Product selectedProduct) {
+        // Đổ dữ liệu vào TextField
+        txtID.setText(String.valueOf(selectedProduct.getProductID()));
+        txtProductName.setText(selectedProduct.getProductName());
+        txtProductDescription.setText(selectedProduct.getDescribeProduct());
+        txtProductInformation.setText(selectedProduct.getProductInformation());
+        txtPrice.setText(String.valueOf(selectedProduct.getPrice()));
+
+        // Đổ dữ liệu vào Spinner
+        spnQuantity.getValueFactory().setValue(selectedProduct.getQuantity());
+
+        // Đổ dữ liệu vào CheckBox
+        chkHide.setSelected(!selectedProduct.isHide());
+
+        // Đổ dữ liệu vào ComboBox
+        if (selectedProduct.getProductCatalog() != null) {
+            cmbProductCatalog.setValue(selectedProduct.getProductCatalog().getProductCatalogName());
+        } else {
+            cmbProductCatalog.setValue(null);
         }
     }
 }
