@@ -905,27 +905,29 @@ public class ProductController {
             filterUrl += "&productCatalogID=" + productCatalogID;
         }
         if (hasValueTextField(txtMinPriceLoc)) {
-            filterUrl += encodeUrlParam("&price[gte]=" + txtMinPriceLoc.getText());
+            filterUrl += "&price[gte]=" + txtMinPriceLoc.getText();
         }
         if (hasValueTextField(txtMaxPriceLoc)) {
-            filterUrl += encodeUrlParam("&price[lte]=" + txtMaxPriceLoc.getText());
+            filterUrl += "&price[lte]=" + txtMaxPriceLoc.getText();
         }
         if (hasValueTextField(txtMinQuantityLoc)) {
-            filterUrl += encodeUrlParam("&quantity[gte]=" + txtMinQuantityLoc.getText());
+            filterUrl += "&quantity[gte]=" + txtMinQuantityLoc.getText();
         }
         if (hasValueTextField(txtMaxQuantityLoc)) {
-            filterUrl += encodeUrlParam("&quantity[lte]=" + txtMaxQuantityLoc.getText());
+            filterUrl += "&quantity[lte]=" + txtMaxQuantityLoc.getText();
         }
         if (hasValueTextField(txtMinSaleLoc)) {
-            filterUrl += encodeUrlParam("&sale[gte]=" + txtMinSaleLoc.getText());
+            filterUrl += "&sale[gte]=" + txtMinSaleLoc.getText();
         }
         if (hasValueTextField(txtMaxSaleLoc)) {
-            filterUrl += encodeUrlParam("&sale[lte]=" + txtMaxSaleLoc.getText());
+            filterUrl += "&sale[lte]=" + txtMaxSaleLoc.getText();
         }
         if (chkHideActive.isSelected()) {
             filterUrl += "&hide=" + (chkHideLoc.isSelected() ? 0 : 1);
         }
+        System.out.println(filterUrl);
         handleRefresh();
+        handleRefreshLoc();
         showNhapLieuPane();
         fetchProducts(filterUrl);
     }
@@ -934,6 +936,19 @@ public class ProductController {
     void handleResetComboBox(ActionEvent actionEvent) {
         cmbProductCatalogLoc.setValue(null);
         cmbProductCatalogLoc.setPromptText("Chọn danh mục");
+    }
+
+    private void handleRefreshLoc() {
+        txtIDLoc.setText(null);
+        txtMinPriceLoc.setText(null);
+        txtMaxPriceLoc.setText(null);
+        txtMinSaleLoc.setText(null);
+        txtMaxSaleLoc.setText(null);
+        txtMinQuantityLoc.setText(null);
+        txtMaxQuantityLoc.setText(null);
+        cmbProductCatalogLoc.setValue(null);
+        chkHideActive.setSelected(false);
+        chkHideLoc.setSelected(false);
     }
 
     private void showLocPane() {
