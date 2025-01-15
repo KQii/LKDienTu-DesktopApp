@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -85,8 +86,8 @@
             </Button>
             <Region prefHeight="43.0" prefWidth="56.0" />
             <TextField fx:id="txtTimKiem" prefHeight="30.0" prefWidth="213.0" promptText="Nhập tên sản phẩm" />
-            <Button fx:id="btnTimKiem" mnemonicParsing="false" prefHeight="35.0" text="Tìm kiếm" />
-            <Button fx:id="btnLoc" mnemonicParsing="false" prefHeight="35.0" prefWidth="71.0" text="LỌC">
+            <Button fx:id="btnTimKiem" mnemonicParsing="false" onAction="#handleBtnTimKiem" prefHeight="35.0" text="Tìm kiếm" />
+            <Button fx:id="btnLoc" mnemonicParsing="false" onAction="#handleBtnLoc" prefHeight="35.0" prefWidth="71.0" text="LỌC">
                <graphic>
                   <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
@@ -96,7 +97,83 @@
             </Button>
          </items>
       </ToolBar>
-      <AnchorPane fx:id="ancNhapLieu" disable="true" layoutX="15.0" layoutY="339.0" prefHeight="209.0" prefWidth="970.0">
+      <AnchorPane fx:id="ancLoc" layoutX="15.0" layoutY="339.0" prefHeight="209.0" prefWidth="970.0">
+         <children>
+            <Label layoutX="360.0" layoutY="48.0" text="ID">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label layoutX="489.0" layoutY="48.0" text="Danh mục">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label layoutX="94.0" layoutY="87.0" text="Giá bán">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="lblHideLoc" disable="true" layoutX="614.0" layoutY="132.0" text="Hiển thị">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtIDLoc" layoutX="381.0" layoutY="45.0" prefHeight="25.0" prefWidth="40.0" />
+            <TextField fx:id="txtMinPriceLoc" layoutX="180.0" layoutY="84.0" prefHeight="25.0" prefWidth="106.0" promptText="Giá tối thiểu" />
+            <ComboBox fx:id="cmbProductCatalogLoc" layoutX="563.0" layoutY="45.0" prefHeight="25.0" prefWidth="207.0" promptText="Chọn danh mục" />
+            <CheckBox fx:id="chkHideLoc" disable="true" layoutX="664.0" layoutY="133.0" mnemonicParsing="false" />
+            <Label layoutX="470.0" layoutY="7.0" text="LỌC">
+               <font>
+                  <Font name="System Bold Italic" size="16.0" />
+               </font>
+            </Label>
+            <Label layoutX="496.0" layoutY="87.0" text="Giảm giá">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtMaxPriceLoc" layoutX="315.0" layoutY="84.0" prefHeight="25.0" prefWidth="106.0" promptText="Giá tối đa" />
+            <Label layoutX="297.0" layoutY="87.0" text="-">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label layoutX="94.0" layoutY="132.0" text="Số lượng tồn">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtMinQuantityLoc" layoutX="180.0" layoutY="129.0" prefHeight="25.0" prefWidth="106.0" promptText="SL tối thiểu" />
+            <TextField fx:id="txtMaxQuantityLoc" layoutX="315.0" layoutY="129.0" prefHeight="25.0" prefWidth="106.0" promptText="SL tối đa" />
+            <Label layoutX="297.0" layoutY="132.0" text="-">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtMinSaleLoc" layoutX="561.0" layoutY="84.0" prefHeight="25.0" prefWidth="106.0" promptText="\% tối thiểu" />
+            <TextField fx:id="txtMaxSaleLoc" layoutX="696.0" layoutY="84.0" prefHeight="25.0" prefWidth="106.0" promptText="\% tối đa" />
+            <Label layoutX="678.0" layoutY="87.0" text="-">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <ButtonBar prefHeight="40.0" prefWidth="200.0" />
+            <Button fx:id="btnXacNhanLoc" layoutX="375.0" layoutY="170.0" mnemonicParsing="false" onAction="#handleBtnXacNhanLoc" text="Xác nhận">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnHuyLoc" layoutX="535.0" layoutY="170.0" mnemonicParsing="false" onAction="#handleBtnHuyLoc" text="Hủy">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Button>
+            <CheckBox fx:id="chkHideActive" layoutX="493.0" layoutY="133.0" mnemonicParsing="false" text="Lọc hiển thị" />
+            <Button fx:id="btnResetCmbProductCatalog" layoutX="776.0" layoutY="45.0" mnemonicParsing="false" onAction="#handleResetComboBox" prefHeight="25.0" prefWidth="17.0" text="Button" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="ancNhapLieu" disable="true" layoutX="15.0" layoutY="339.0" prefHeight="209.0" prefWidth="970.0" visible="false">
          <children>
             <Label layoutX="30.0" layoutY="48.0" text="ID">
                <font>

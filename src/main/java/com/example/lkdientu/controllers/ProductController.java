@@ -12,14 +12,18 @@ import javafx.collections.ObservableList;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +34,9 @@ public class ProductController {
 
     @FXML
     private AnchorPane ancNhapLieu;
+
+    @FXML
+    private AnchorPane ancLoc;
 
     @FXML
     private AnchorPane ancProductView;
@@ -92,7 +99,31 @@ public class ProductController {
     private TableView<Product> tableProduct;
 
     @FXML
+    private Label lblHideLoc;
+
+    @FXML
     private TextField txtID;
+
+    @FXML
+    private TextField txtIDLoc;
+
+    @FXML
+    private TextField txtMaxPriceLoc;
+
+    @FXML
+    private TextField txtMaxQuantityLoc;
+
+    @FXML
+    private TextField txtMaxSaleLoc;
+
+    @FXML
+    private TextField txtMinPriceLoc;
+
+    @FXML
+    private TextField txtMinQuantityLoc;
+
+    @FXML
+    private TextField txtMinSaleLoc;
 
     @FXML
     private TextField txtPrice;
@@ -118,11 +149,17 @@ public class ProductController {
     @FXML
     private CheckBox chkHide;
 
-//    @FXML
-//    private ComboBox<String> cmbProductCatalog;
+    @FXML
+    private CheckBox chkHideLoc;
+
+    @FXML
+    private CheckBox chkHideActive;
 
     @FXML
     private ComboBox<String> cmbProductCatalog;
+
+    @FXML
+    private ComboBox<String> cmbProductCatalogLoc;
 
     private ObservableList<Product> productList = FXCollections.observableArrayList();
     private ObservableList<ProductCatalog> productCatalogList = FXCollections.observableArrayList();
@@ -146,7 +183,6 @@ public class ProductController {
             }
         });
 
-
         // Gắn các cột trong TableView với thuộc tính của Product
         colProductID.setCellValueFactory(new PropertyValueFactory<>("productID"));
         colProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
@@ -167,10 +203,21 @@ public class ProductController {
         tableProduct.setItems(productList);
 
         // Gọi API để lấy dữ liệu
-        fetchProducts();
+        fetchProducts(API_URL);
 
         // Fill combobox
-        fetchProductCatalogs();
+        fetchProductCatalogs(cmbProductCatalog);
+
+        // Search bar
+        setupAutoCompleteTextField(txtTimKiem);
+
+        showNhapLieuPane();
+
+        // Checkbox Loc Active
+        chkHideActive.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            chkHideLoc.setDisable(!newValue);
+            lblHideLoc.setDisable(!newValue);
+        });
 
         // Thêm listener cho TableView
         tableProduct.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -182,14 +229,14 @@ public class ProductController {
         });
     }
 
-    public void fetchProducts() {
+    public void fetchProducts(String ApiUrl) {
         try {
             // Tạo HttpClient
             HttpClient client = HttpClient.newHttpClient();
 
             // Tạo HttpRequest
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(API_URL)) // URL của API
+                    .uri(URI.create(ApiUrl)) // URL của API
                     .GET()
                     .build();
 
@@ -221,7 +268,7 @@ public class ProductController {
         }
     }
 
-    public void fetchProductCatalogs() {
+    public void fetchProductCatalogs(ComboBox<String> comboBox) {
         String catalogApiUrl = "http://127.0.0.1:3000/api/v1/productCatalogs/"; // Thay bằng API thực tế
 
         try {
@@ -277,7 +324,7 @@ public class ProductController {
                 }
 
                 // Gắn danh sách vào ComboBox
-                cmbProductCatalog.setItems(productCatalogNameList);
+                comboBox.setItems(productCatalogNameList);
             } else {
                 System.out.println("Lỗi API: " + response.statusCode());
             }
@@ -285,6 +332,95 @@ public class ProductController {
             e.printStackTrace();
         }
     }
+
+    private List<String> fetchProductNames() {
+        String apiUrl = "http://127.0.0.1:3000/api/v2/products/?limit=100";
+        List<String> productNames = new ArrayList<>();
+
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                ApiResponses<ApiResponses.ProductListData> apiResponse = objectMapper.readValue(
+                        response.body(),
+                        new TypeReference<>() {}
+                );
+
+                // Lấy tên sản phẩm từ danh sách sản phẩm
+                List<Product> products = apiResponse.getData().getProducts();
+                for (Product product : products) {
+                    productNames.add(product.getProductName());
+                }
+            } else {
+                System.out.println("Lỗi khi gọi API: " + response.statusCode());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return productNames;
+    }
+
+    public void setupAutoCompleteTextField(TextField textField) {
+        // Gọi API để lấy danh sách sản phẩm
+        List<String> productNames = fetchProductNames();
+
+        // Tạo ContextMenu cho danh sách gợi ý
+        ContextMenu contextMenu = new ContextMenu();
+
+        // Hiển thị danh sách gợi ý khi người dùng nhập
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.trim().isEmpty()) {
+                contextMenu.hide();
+            } else {
+                // Lọc danh sách gợi ý
+                List<String> filteredSuggestions = productNames.stream()
+                        .filter(item -> item.toLowerCase().contains(newValue.toLowerCase()))
+                        .toList();
+
+                if (filteredSuggestions.isEmpty()) {
+                    contextMenu.hide();
+                } else {
+                    // Cập nhật các mục trong ContextMenu
+                    contextMenu.getItems().clear();
+                    for (String suggestion : filteredSuggestions) {
+                        MenuItem item = new MenuItem(suggestion);
+                        item.setOnAction(event -> {
+                            textField.setText(suggestion);
+                            contextMenu.hide();
+                        });
+                        contextMenu.getItems().add(item);
+                    }
+
+                    // Hiển thị ContextMenu
+                    if (!contextMenu.isShowing()) {
+                        // Lấy vị trí của TextField
+                        Bounds boundsInScreen = textField.localToScreen(textField.getBoundsInLocal());
+                        double x = boundsInScreen.getMinX(); // Tọa độ X (bên trái TextField)
+                        double y = boundsInScreen.getMaxY();
+
+                        // Hiển thị ContextMenu tại vị trí chính xác
+                        contextMenu.show(textField, x, y);
+                    }
+                }
+            }
+        });
+
+        // Đóng ContextMenu khi nhấn ESC
+        textField.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case ESCAPE -> contextMenu.hide();
+            }
+        });
+    }
+
 
     public void postProduct(boolean isThem) {
         String apiUrl = "http://127.0.0.1:3000/api/v2/products/";
@@ -402,52 +538,45 @@ public class ProductController {
     }
 
     public void deleteProduct() {
-        String apiUrl = "http://127.0.0.1:3000/api/v2/products/";
+        int productID = txtID.getText() == null ? 0 : Integer.parseInt(txtID.getText());
+        // Hiển thị thông báo xác nhận
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Xác nhận xóa");
+        confirmAlert.setHeaderText("Bạn có chắc chắn muốn xóa sản phẩm này?");
+        confirmAlert.setContentText("Sản phẩm với ID: " + productID);
 
-        try {
-            // Thu thập dữ liệu từ giao diện
-            int productID = txtID.getText() == null ? 0 : Integer.parseInt(txtID.getText());
-            apiUrl += productID;
+        if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            String apiUrl = "http://127.0.0.1:3000/api/v2/products/" + productID;
 
-            // Tạo HttpRequest với phương thức DELETE
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl))
-                    .DELETE()
-                    .build();
+            try {
+                // Tạo HttpRequest với phương thức DELETE
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(apiUrl))
+                        .DELETE()
+                        .build();
 
-            // Tạo HttpClient và gửi yêu cầu
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                // Tạo HttpClient và gửi yêu cầu
+                HttpClient client = HttpClient.newHttpClient();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            // Parse JSON thành ApiResponse
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            if (response.statusCode() == 204) {
-                // Hiển thị thông báo thành công
-                String contentText = "Sản phầm với ID " + productID + " đã được xóa.";
-                showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Xóa sản phẩm thành công!", contentText);
-            } else {
-                // Xử lý lỗi từ API
-//                String responseBody = response.body();
-//                ApiErrorResponse errorResponse = objectMapper.readValue(responseBody, ApiErrorResponse.class);
-//
-//                // Hiển thị thông báo lỗi
-//                showAlert(
-//                        Alert.AlertType.ERROR,
-//                        "Lỗi từ API " + errorResponse.getError().getStatusCode(),
-//                        "Không thể xóa sản phẩm",
-//                        errorResponse.getMessage()
-//                );
-                showAlert(
-                        Alert.AlertType.ERROR,
-                        "Lỗi từ API",
-                        "Xóa sản phẩm thất bại",
-                        "Không thể xóa sản phẩm do thông tin sản phẩm đã tồn tại ở nơi khác"
-                );
+                if (response.statusCode() == 204) {
+                    // Hiển thị thông báo thành công
+                    String contentText = "Sản phầm với ID " + productID + " đã được xóa.";
+                    showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Xóa sản phẩm thành công!", contentText);
+                } else {
+                    showAlert(
+                            Alert.AlertType.ERROR,
+                            "Lỗi từ API",
+                            "Xóa sản phẩm thất bại",
+                            "Không thể xóa sản phẩm do thông tin sản phẩm đã tồn tại ở nơi khác"
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống", "Đã xảy ra lỗi khi xóa sản phẩm", e.getMessage());
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("Hủy xóa sản phẩm với ID: " + productID);
         }
     }
 
@@ -557,6 +686,9 @@ public class ProductController {
         return true;
     }
 
+    public String encodeUrlParam(String param) {
+        return URLEncoder.encode(param, StandardCharsets.UTF_8);
+    }
 
     // Event listener: btnThem
     @FXML
@@ -580,6 +712,9 @@ public class ProductController {
         btnRefresh.setDisable(true);
         btnUndo.setDisable(false);
         btnLuu.setDisable(false);
+        txtTimKiem.setDisable(true);
+        btnTimKiem.setDisable(true);
+        btnLoc.setDisable(true);
         tableProduct.setDisable(true);
         ancNhapLieu.setDisable(false);
         ancProductView.requestFocus();
@@ -608,6 +743,9 @@ public class ProductController {
         btnRefresh.setDisable(true);
         btnUndo.setDisable(false);
         btnLuu.setDisable(false);
+        txtTimKiem.setDisable(true);
+        btnTimKiem.setDisable(true);
+        btnLoc.setDisable(true);
         tableProduct.setDisable(true);
         ancNhapLieu.setDisable(false);
         ancProductView.requestFocus();
@@ -617,17 +755,7 @@ public class ProductController {
     void handleBtnXoa(ActionEvent event) {
         deleteProduct();
         handleRefresh();
-
-        // Toggle Button Visibility
-//        btnThem.setDisable(true);
-//        btnSua.setDisable(true);
-//        btnXoa.setDisable(true);
-//        btnRefresh.setDisable(true);
-//        btnUndo.setDisable(false);
-//        btnLuu.setDisable(false);
-//        tableProduct.setDisable(true);
-//        ancNhapLieu.setDisable(false);
-//        ancProductView.requestFocus();
+        fetchProducts(API_URL);
     }
 
     @FXML
@@ -650,6 +778,9 @@ public class ProductController {
         btnRefresh.setDisable(false);
         btnUndo.setDisable(true);
         btnLuu.setDisable(true);
+        txtTimKiem.setDisable(false);
+        btnTimKiem.setDisable(false);
+        btnLoc.setDisable(false);
 
         tableProduct.setDisable(false);
         ancNhapLieu.setDisable(true);
@@ -678,11 +809,13 @@ public class ProductController {
         btnRefresh.setDisable(false);
         btnUndo.setDisable(true);
         btnLuu.setDisable(true);
+        txtTimKiem.setDisable(false);
+        btnTimKiem.setDisable(false);
+        btnLoc.setDisable(false);
 
         tableProduct.setDisable(false);
         ancNhapLieu.setDisable(true);
         ancProductView.requestFocus();
-
 
         // Clear inputs
         txtID.setText(null);
@@ -695,14 +828,12 @@ public class ProductController {
         spnQuantity.getValueFactory().setValue(0);
         chkHide.setSelected(false);
         cmbProductCatalog.setValue(null);
-
-        // Fetch Products
-        fetchProducts();
     }
 
     @FXML
     void handleBtnRefresh(ActionEvent event) {
         handleRefresh();
+        fetchProducts(API_URL);
     }
 
     @FXML
@@ -711,6 +842,112 @@ public class ProductController {
             postProduct(isThem);
             isThem = false;
             handleRefresh();
+            fetchProducts(API_URL);
         }
+    }
+
+    @FXML
+    void handleBtnTimKiem(ActionEvent actionEvent) {
+        if (txtTimKiem.getText().isEmpty()) {
+            fetchProducts(API_URL);
+        } else {
+            fetchProducts(API_URL + "&productName=" + encodeUrlParam(txtTimKiem.getText()));
+        }
+    }
+
+    @FXML
+    void handleBtnLoc(ActionEvent actionEvent) {
+        // Toggle Button Visibility
+        btnThem.setDisable(true);
+        btnSua.setDisable(true);
+        btnXoa.setDisable(true);
+        btnRefresh.setDisable(true);
+        btnUndo.setDisable(true);
+        btnLuu.setDisable(true);
+        txtTimKiem.setDisable(true);
+        btnTimKiem.setDisable(true);
+        btnLoc.setDisable(true);
+
+        tableProduct.setDisable(true);
+        ancProductView.requestFocus();
+        showLocPane();
+    }
+
+    @FXML
+    void handleBtnHuyLoc(ActionEvent actionEvent) {
+        // Toggle Button Visibility
+        btnThem.setDisable(false);
+        btnSua.setDisable(true);
+        btnXoa.setDisable(true);
+        btnRefresh.setDisable(false);
+        btnUndo.setDisable(true);
+        btnLuu.setDisable(true);
+        txtTimKiem.setDisable(false);
+        btnTimKiem.setDisable(false);
+        btnLoc.setDisable(false);
+
+        tableProduct.setDisable(false);
+        ancNhapLieu.setDisable(true);
+        ancProductView.requestFocus();
+        showNhapLieuPane();
+    }
+
+    @FXML
+    void handleBtnXacNhanLoc(ActionEvent actionEvent) {
+        String filterUrl = API_URL;
+        if (hasValueTextField(txtIDLoc)) {
+            filterUrl += "&productID=" + txtIDLoc.getText();
+        }
+        if (cmbProductCatalogLoc.getValue() != null) {
+            String selectedCatalogName = cmbProductCatalogLoc.getValue();
+            ProductCatalog selectedCatalog = catalogMap.get(selectedCatalogName);
+            int productCatalogID = selectedCatalog.getProductCatalogID();
+            filterUrl += "&productCatalogID=" + productCatalogID;
+        }
+        if (hasValueTextField(txtMinPriceLoc)) {
+            filterUrl += encodeUrlParam("&price[gte]=" + txtMinPriceLoc.getText());
+        }
+        if (hasValueTextField(txtMaxPriceLoc)) {
+            filterUrl += encodeUrlParam("&price[lte]=" + txtMaxPriceLoc.getText());
+        }
+        if (hasValueTextField(txtMinQuantityLoc)) {
+            filterUrl += encodeUrlParam("&quantity[gte]=" + txtMinQuantityLoc.getText());
+        }
+        if (hasValueTextField(txtMaxQuantityLoc)) {
+            filterUrl += encodeUrlParam("&quantity[lte]=" + txtMaxQuantityLoc.getText());
+        }
+        if (hasValueTextField(txtMinSaleLoc)) {
+            filterUrl += encodeUrlParam("&sale[gte]=" + txtMinSaleLoc.getText());
+        }
+        if (hasValueTextField(txtMaxSaleLoc)) {
+            filterUrl += encodeUrlParam("&sale[lte]=" + txtMaxSaleLoc.getText());
+        }
+        if (chkHideActive.isSelected()) {
+            filterUrl += "&hide=" + (chkHideLoc.isSelected() ? 0 : 1);
+        }
+        handleRefresh();
+        showNhapLieuPane();
+        fetchProducts(filterUrl);
+    }
+
+    @FXML
+    void handleResetComboBox(ActionEvent actionEvent) {
+        cmbProductCatalogLoc.setValue(null);
+        cmbProductCatalogLoc.setPromptText("Chọn danh mục");
+    }
+
+    private void showLocPane() {
+        ancNhapLieu.setVisible(false);
+        ancLoc.setVisible(true);
+        fetchProductCatalogs(cmbProductCatalogLoc);
+    }
+
+    private void showNhapLieuPane() {
+        ancLoc.setVisible(false);
+        ancNhapLieu.setVisible(true);
+    }
+
+    private boolean hasValueTextField(TextField textField) {
+        return textField.getText() != null && !textField.getText().trim().isEmpty();
     }
 }
