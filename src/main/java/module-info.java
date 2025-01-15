@@ -12,4 +12,5 @@ module com.example.lkdientu {
     exports com.example.lkdientu.controllers;
     opens com.example.lkdientu.controllers to javafx.fxml;
     opens com.example.lkdientu.models to javafx.base, com.fasterxml.jackson.databind;
+    opens com.example.lkdientu.utils to javafx.base, com.fasterxml.jackson.databind;
 }

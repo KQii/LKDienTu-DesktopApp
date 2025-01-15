@@ -1,11 +1,14 @@
-package com.example.lkdientu.models;
+package com.example.lkdientu.utils;
+
+import com.example.lkdientu.models.Product;
+import com.example.lkdientu.models.ProductCatalog;
 
 import java.util.List;
 
-public class ApiResponse {
+public class ApiResponses<T> {
     private String status;
-    private int results;
-    private Data data;
+    private int results; // Chỉ dùng cho phản hồi chứa danh sách
+    private T data;
 
     // Getters và Setters
     public String getStatus() {
@@ -24,20 +27,18 @@ public class ApiResponse {
         this.results = results;
     }
 
-    public Data getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(T data) {
         this.data = data;
     }
 
-    // Định nghĩa lớp con public static
-    public static class Data {
+    // Lớp lồng bên trong để ánh xạ "data" cho danh sách sản phẩm
+    public static class ProductListData {
         private List<Product> products;
-        private List<ProductCatalog> productCatalogs;
 
-        // Getters và Setters
         public List<Product> getProducts() {
             return products;
         }
@@ -45,6 +46,23 @@ public class ApiResponse {
         public void setProducts(List<Product> products) {
             this.products = products;
         }
+    }
+
+    // Lớp lồng bên trong để ánh xạ "data" cho một sản phẩm
+    public static class ProductData {
+        private Product product;
+
+        public Product getProduct() {
+            return product;
+        }
+
+        public void setProduct(Product product) {
+            this.product = product;
+        }
+    }
+
+    public static class ProductCatalogListData {
+        private List<ProductCatalog> productCatalogs;
 
         public List<ProductCatalog> getProductCatalogs() {
             return productCatalogs;

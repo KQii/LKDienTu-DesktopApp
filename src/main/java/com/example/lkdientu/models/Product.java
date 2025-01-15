@@ -1,5 +1,7 @@
 package com.example.lkdientu.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Product {
     private int productID;
     private String productName;
@@ -107,5 +109,21 @@ public class Product {
 
     public void setProductCatalog(ProductCatalog productCatalog) {
         this.productCatalog = productCatalog;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productID=" + productID +
+                ", productName='" + productName + '\'' +
+                ", describeProduct='" + describeProduct + '\'' +
+                ", image='" + image + '\'' +
+                ", productInformation='" + productInformation + '\'' +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                ", sale=" + sale +
+                ", hide=" + hide +
+                ", productCatalog=" + productCatalog +
+                '}';
     }
 }
