@@ -1,9 +1,11 @@
 package com.example.lkdientu.controllers;
 
 import com.example.lkdientu.LKDienTuApplication;
+import com.example.lkdientu.SessionManager;
 import com.example.lkdientu.models.Product;
 import com.example.lkdientu.models.ProductCatalog;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -30,57 +32,13 @@ public class MainController {
     private Button btnProductPage;
 
     @FXML
-    private Button btnAddProduct;
-
-    @FXML
-    private TableColumn<Product, Integer> colHide;
-
-    @FXML
-    private TableColumn<Product, String> colImage;
-
-    @FXML
-    private TableColumn<Product, Double> colPrice;
-
-    @FXML
-    private TableColumn<Product, String> colProductCatalog;
-
-    @FXML
-    private TableColumn<Product, String> colProductDescription;
-
-    @FXML
-    private TableColumn<Product, Integer> colProductID;
-
-    @FXML
-    private TableColumn<Product, String> colProductInformation;
-
-    @FXML
-    private TableColumn<Product, String> colProductName;
-
-    @FXML
-    private TableColumn<Product, Integer> colQuantity;
-
-    @FXML
-    private TableColumn<Product, Double> colSale;
-
-    @FXML
-    private TableColumn<Product, String> colActions;
+    private Button btnDangXuat;
 
     @FXML
     private TabPane tabPane;
 
     @FXML
     private Tab tabHomePage;
-
-    @FXML
-    private TableView<Product> tableProduct;
-
-    @FXML
-    private TextField txtTimKiem;
-
-    @FXML
-    private Button btnTimKiem;
-
-    private ObservableList<Product> productList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -128,4 +86,26 @@ public class MainController {
 
     @FXML
     private void handleProductCatalogTab() { openOrSwitchTab("Danh mục", "/com/example/lkdientu/views/productCatalog-view.fxml"); }
+
+    @FXML
+    void handleBtnDangXuat(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Bạn có chắc muốn đăng xuất?", ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            // Xóa token và quay lại màn hình đăng nhập
+            SessionManager.getInstance().logout();
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(LKDienTuApplication.class.getResource("views/login-view.fxml"));
+                Stage stage = (Stage) btnDangXuat.getScene().getWindow();
+                Scene loginScene = new Scene(fxmlLoader.load());
+                stage.setScene(loginScene);
+                stage.setTitle("Đăng nhập");
+                stage.centerOnScreen();
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

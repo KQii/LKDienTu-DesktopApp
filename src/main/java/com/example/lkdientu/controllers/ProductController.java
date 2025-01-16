@@ -1,7 +1,7 @@
 package com.example.lkdientu.controllers;
 
+import com.example.lkdientu.SessionManager;
 import com.example.lkdientu.utils.ApiErrorResponse;
-import com.example.lkdientu.utils.ApiResponse;
 import com.example.lkdientu.models.Product;
 import com.example.lkdientu.models.ProductCatalog;
 import com.example.lkdientu.utils.ApiResponses;
@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductController {
-    private String API_URL = "http://127.0.0.1:3000/api/v2/products/?limit=100";
+    String token = SessionManager.getInstance().getToken();
+    private String API_URL = "http://127.0.0.1:3000/api/v1/products/?limit=100";
     private boolean isThem = false;
 
     @FXML
@@ -169,6 +170,7 @@ public class ProductController {
     @FXML
     public void initialize() {
         System.out.println("ProductController loaded");
+        System.out.println("TOKEN: " + token);
 
         // Initialize ValueFactory for Spinner
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 0);
@@ -236,7 +238,8 @@ public class ProductController {
 
             // Tạo HttpRequest
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(ApiUrl)) // URL của API
+                    .uri(URI.create(ApiUrl))
+                    .header("Authorization", "Bearer " + token)
                     .GET()
                     .build();
 
@@ -277,7 +280,8 @@ public class ProductController {
 
             // Tạo HttpRequest
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(catalogApiUrl)) // URL của API
+                    .uri(URI.create(catalogApiUrl))
+                    .header("Authorization", "Bearer " + token)
                     .GET()
                     .build();
 
@@ -320,7 +324,6 @@ public class ProductController {
                             catalogMap.put(displayName, child);
                         }
                     }
-                    System.out.println(productCatalogList);
                 }
 
                 // Gắn danh sách vào ComboBox
@@ -334,13 +337,14 @@ public class ProductController {
     }
 
     private List<String> fetchProductNames() {
-        String apiUrl = "http://127.0.0.1:3000/api/v2/products/?limit=100";
+        String apiUrl = "http://127.0.0.1:3000/api/v1/products/?limit=100";
         List<String> productNames = new ArrayList<>();
 
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl))
+                    .header("Authorization", "Bearer " + token)
                     .GET()
                     .build();
 
@@ -423,7 +427,7 @@ public class ProductController {
 
 
         public void postProduct(boolean isThem) {
-            String apiUrl = "http://127.0.0.1:3000/api/v2/products/";
+            String apiUrl = "http://127.0.0.1:3000/api/v1/products/";
 
             try {
                 // Thu thập dữ liệu từ giao diện
@@ -467,6 +471,7 @@ public class ProductController {
                 HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                         .uri(URI.create(apiUrl))
                         .header("Content-Type", "application/json")
+                        .header("Authorization", "Bearer " + token)
                         .method(isThem ? "POST" : "PATCH", HttpRequest.BodyPublishers.ofString(requestBody));
 
                 // Gửi request và nhận response
@@ -546,12 +551,13 @@ public class ProductController {
         confirmAlert.setContentText("Sản phẩm với ID: " + productID);
 
         if (confirmAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            String apiUrl = "http://127.0.0.1:3000/api/v2/products/" + productID;
+            String apiUrl = "http://127.0.0.1:3000/api/v1/products/" + productID;
 
             try {
                 // Tạo HttpRequest với phương thức DELETE
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(apiUrl))
+                        .header("Authorization", "Bearer " + token)
                         .DELETE()
                         .build();
 
@@ -925,7 +931,6 @@ public class ProductController {
         if (chkHideActive.isSelected()) {
             filterUrl += "&hide=" + (chkHideLoc.isSelected() ? 0 : 1);
         }
-        System.out.println(filterUrl);
         handleRefresh();
         handleRefreshLoc();
         showNhapLieuPane();

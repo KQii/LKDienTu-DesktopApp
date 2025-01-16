@@ -18,6 +18,7 @@
                   <Button fx:id="btnProductPage" layoutX="24.0" layoutY="238.0" mnemonicParsing="false" onAction="#handleProductTab" prefHeight="43.0" prefWidth="152.0" text="Quản lý sản phẩm" />
                   <Button fx:id="btnAccountPage" layoutX="24.0" layoutY="157.0" mnemonicParsing="false" onAction="#handleAccountTab" prefHeight="43.0" prefWidth="152.0" text="Quản lý tài khoản" />
                   <Button fx:id="btnProductCatalogPage" layoutX="24.0" layoutY="318.0" mnemonicParsing="false" onAction="#handleProductCatalogTab" prefHeight="43.0" prefWidth="152.0" text="Quản lý danh mục" />
+                  <Button fx:id="btnDangXuat" layoutX="65.0" layoutY="552.0" mnemonicParsing="false" onAction="#handleBtnDangXuat" text="Đăng xuất" />
                </children>
             </AnchorPane>
          </left>

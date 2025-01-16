@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lkdientu.controllers.auth.LoginController">
+   <children>
+      <Label layoutX="99.0" layoutY="66.0" text="HỆ THỐNG QUẢN LÝ LINH KIỆN">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="190.0" layoutY="109.0" text="Đăng nhập để tiếp tục">
+         <font>
+            <Font name="System Italic" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="57.0" layoutY="172.0" text="Tên tài khoản">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="82.0" layoutY="232.0" text="Mật khẩu">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtAccountName" layoutX="157.0" layoutY="170.0" prefHeight="25.0" prefWidth="271.0" promptText="Nhập tên tài khoản" />
+      <Button fx:id="btnDangNhap" layoutX="306.0" layoutY="288.0" mnemonicParsing="false" onAction="#handleBtnDangNhap" text="Đăng nhập" />
+      <Button fx:id="btnDangKy" layoutX="131.0" layoutY="288.0" mnemonicParsing="false" onAction="#handleBtnDangKy" text="Đăng ký" />
+      <Button fx:id="btnQuenMatKhau" layoutX="199.0" layoutY="342.0" mnemonicParsing="false" onAction="#handleBtnQuenMatKhau" text="Quên mật khẩu" />
+      <PasswordField fx:id="txtPassword" layoutX="157.0" layoutY="230.0" prefHeight="25.0" prefWidth="271.0" promptText="Nhập mật khẩu" />
+   </children>
+</AnchorPane>

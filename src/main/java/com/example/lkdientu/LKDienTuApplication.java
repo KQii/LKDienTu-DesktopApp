@@ -10,10 +10,10 @@ import java.io.IOException;
 public class LKDienTuApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(LKDienTuApplication.class.getResource("views/lkdientu-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(LKDienTuApplication.class.getResource("views/login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
-        stage.setTitle("Hello!");
+        stage.setTitle("Đăng nhập");
         stage.setScene(scene);
         stage.show();
     }

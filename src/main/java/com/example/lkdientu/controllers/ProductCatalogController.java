@@ -1,5 +1,6 @@
 package com.example.lkdientu.controllers;
 
+import com.example.lkdientu.SessionManager;
 import com.example.lkdientu.models.Product;
 import com.example.lkdientu.models.ProductCatalog;
 import com.example.lkdientu.utils.ApiErrorResponse;
@@ -28,6 +29,7 @@ import static com.example.lkdientu.utils.AlertUtils.showAlert;
 import static com.example.lkdientu.utils.UrlUtils.encodeUrlParam;
 
 public class ProductCatalogController {
+    String token = SessionManager.getInstance().getToken();
     private String API_URL = "http://127.0.0.1:3000/api/v1/productCatalogs/?limit=100";
     private boolean isThem = false;
 
@@ -147,6 +149,7 @@ public class ProductCatalogController {
 
     @FXML
     public void initialize() {
+        String token = SessionManager.getInstance().getToken();
         System.out.println("ProductCatalogController loaded");
 
         // Liên kết các cột với thuộc tính trong ProductCatalog
@@ -217,6 +220,7 @@ public class ProductCatalogController {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(ApiUrl))
+                    .header("Authorization", "Bearer " + token)
                     .GET()
                     .build();
 
@@ -280,6 +284,7 @@ public class ProductCatalogController {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(ApiUrl))
+                    .header("Authorization", "Bearer " + token)
                     .GET()
                     .build();
 
@@ -422,6 +427,7 @@ public class ProductCatalogController {
             HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl))
                     .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + token)
                     .method(isThem ? "POST" : "PATCH", HttpRequest.BodyPublishers.ofString(requestBody));
 
             // Gửi request và nhận response
@@ -731,6 +737,7 @@ public class ProductCatalogController {
                 // Tạo HttpRequest với phương thức DELETE
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(apiUrl))
+                        .header("Authorization", "Bearer " + token)
                         .DELETE()
                         .build();
 
@@ -767,6 +774,7 @@ public class ProductCatalogController {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl))
+                    .header("Authorization", "Bearer " + token)
                     .GET()
                     .build();
 
