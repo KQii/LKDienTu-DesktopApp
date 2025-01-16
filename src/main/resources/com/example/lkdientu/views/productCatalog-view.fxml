@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="ancProductCatalogView" minHeight="0.0" minWidth="0.0" prefHeight="562.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.lkdientu.controllers.ProductCatalogController">
+   <children>
+      <TableView fx:id="tableProductCatalog" layoutX="15.0" layoutY="128.0" prefHeight="209.0" prefWidth="970.0">
+         <columns>
+            <TableColumn fx:id="colProductCatalogID" prefWidth="37.33331298828125" text="ID" />
+            <TableColumn fx:id="colProductCatalogName" prefWidth="293.9999809265137" text="CatalogName" />
+            <TableColumn fx:id="colRelation" prefWidth="532.6666564941406" text="Relation" />
+            <TableColumn fx:id="colChildCount" prefWidth="103.99993896484375" text="ChildCount" />
+         </columns>
+      </TableView>
+      <Label layoutX="384.0" layoutY="14.0" text="DANH SÁCH DANH MỤC">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <ToolBar layoutX="15.0" layoutY="61.0" prefHeight="54.0" prefWidth="970.0">
+         <items>
+            <Button fx:id="btnThem" mnemonicParsing="false" onAction="#handleBtnThem" prefHeight="35.0" prefWidth="90.0" text="THÊM">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnSua" disable="true" mnemonicParsing="false" onAction="#handleBtnSua" prefHeight="35.0" prefWidth="90.0" text="SỬA">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnXoa" disable="true" mnemonicParsing="false" onAction="#handleBtnXoa" prefHeight="35.0" prefWidth="90.0" text="XÓA">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnRefresh" mnemonicParsing="false" onAction="#handleBtnRefresh" prefHeight="35.0" prefWidth="100.0" text="REFRESH">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnUndo" disable="true" mnemonicParsing="false" onAction="#handleBtnUndo" prefHeight="35.0" prefWidth="90.0" text="UNDO">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnLuu" disable="true" mnemonicParsing="false" onAction="#handleBtnLuu" prefHeight="35.0" text="LƯU" textFill="#0c29e0">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Region prefHeight="43.0" prefWidth="56.0" />
+            <TextField fx:id="txtTimKiem" prefHeight="30.0" prefWidth="213.0" promptText="Nhập tên danh mục" />
+            <Button fx:id="btnTimKiem" mnemonicParsing="false" onAction="#handleBtnTimKiem" prefHeight="35.0" text="Tìm kiếm" />
+            <Button fx:id="btnLoc" mnemonicParsing="false" onAction="#handleBtnLoc" prefHeight="35.0" prefWidth="71.0" text="LỌC">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+         </items>
+      </ToolBar>
+      <AnchorPane fx:id="ancLoc" layoutX="15.0" layoutY="339.0" prefHeight="209.0" prefWidth="970.0" visible="false">
+         <children>
+            <Label layoutX="315.0" layoutY="47.0" text="Danh mục cha">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cmbProductCatalogLoc" layoutX="419.0" layoutY="44.0" prefHeight="25.0" prefWidth="207.0" promptText="Chọn danh mục" />
+            <Label layoutX="470.0" layoutY="7.0" text="LỌC">
+               <font>
+                  <Font name="System Bold Italic" size="16.0" />
+               </font>
+            </Label>
+            <Label layoutX="678.0" layoutY="87.0" text="-">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnXacNhanLoc" layoutX="375.0" layoutY="170.0" mnemonicParsing="false" onAction="#handleBtnXacNhanLoc" text="Xác nhận">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnHuyLoc" layoutX="535.0" layoutY="170.0" mnemonicParsing="false" onAction="#handleBtnHuyLoc" text="Hủy">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Button>
+            <Button fx:id="btnResetCmbProductCatalog" layoutX="632.0" layoutY="44.0" mnemonicParsing="false" onAction="#handleResetComboBox" prefHeight="25.0" prefWidth="17.0" text="Button" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="ancNhapLieu" disable="true" layoutX="15.0" layoutY="339.0" prefHeight="209.0" prefWidth="970.0">
+         <children>
+            <Label layoutX="52.0" layoutY="52.0" text="ID">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label layoutX="145.0" layoutY="52.0" text="Tên danh mục">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label layoutX="51.0" layoutY="124.0" text="Danh mục cha">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtID" disable="true" editable="false" layoutX="80.0" layoutY="49.0" prefHeight="25.0" prefWidth="40.0" />
+            <ComboBox fx:id="cmbProductCatalogParent" layoutX="145.0" layoutY="121.0" prefHeight="25.0" prefWidth="213.0" promptText="Chọn danh mục" />
+            <Label layoutX="406.0" layoutY="7.0" text="CHI TIẾT DANH MỤC">
+               <font>
+                  <Font name="System Bold Italic" size="16.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtProductCatalogName" layoutX="242.0" layoutY="49.0" promptText="Nhập tên danh mục" />
+            <TextArea fx:id="txtChilds" disable="true" layoutX="615.0" layoutY="49.0" prefHeight="105.0" prefWidth="273.0" />
+            <Label layoutX="493.0" layoutY="92.0" text="Các danh mục con">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnResetCmbProductCatalogParent" layoutX="367.0" layoutY="121.0" mnemonicParsing="false" onAction="#handleBtnResetCmbProductCatalogParent" prefHeight="25.0" prefWidth="17.0" text="Button" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

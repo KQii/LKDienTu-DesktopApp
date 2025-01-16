@@ -72,4 +72,16 @@ public class ApiResponses<T> {
             this.productCatalogs = productCatalogs;
         }
     }
+
+    public static class ProductCatalogData {
+        private ProductCatalog productCatalog;
+
+        public ProductCatalog getProductCatalog() {
+            return productCatalog;
+        }
+
+        public void setProductCatalog(ProductCatalog productCatalog) {
+            this.productCatalog = productCatalog;
+        }
+    }
 }

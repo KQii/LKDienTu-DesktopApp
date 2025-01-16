@@ -125,4 +125,7 @@ public class MainController {
     private void handleProductTab() {
         openOrSwitchTab("Sản phẩm", "/com/example/lkdientu/views/product-view.fxml");
     }
+
+    @FXML
+    private void handleProductCatalogTab() { openOrSwitchTab("Danh mục", "/com/example/lkdientu/views/productCatalog-view.fxml"); }
 }

@@ -422,60 +422,60 @@ public class ProductController {
     }
 
 
-    public void postProduct(boolean isThem) {
-        String apiUrl = "http://127.0.0.1:3000/api/v2/products/";
+        public void postProduct(boolean isThem) {
+            String apiUrl = "http://127.0.0.1:3000/api/v2/products/";
 
-        try {
-            // Thu thập dữ liệu từ giao diện
-            int productID = txtID.getText() == null ? 0 : Integer.parseInt(txtID.getText());
-            String productName = txtProductName.getText();
-            String describeProduct = txtProductDescription.getText();
-            String productInformation = txtProductInformation.getText();
-            double price = txtPrice.getText().isEmpty() ? 0.0 : Double.parseDouble(txtPrice.getText());
-            double sale = txtSale.getText().isEmpty() ? 0.0 : Double.parseDouble(txtSale.getText());
-            int quantity = spnQuantity.getValue();
-            int hideValue = chkHide.isSelected() ? 0 : 1;
-            String image = null;
+            try {
+                // Thu thập dữ liệu từ giao diện
+                int productID = txtID.getText() == null ? 0 : Integer.parseInt(txtID.getText());
+                String productName = txtProductName.getText();
+                String describeProduct = txtProductDescription.getText();
+                String productInformation = txtProductInformation.getText();
+                double price = txtPrice.getText().isEmpty() ? 0.0 : Double.parseDouble(txtPrice.getText());
+                double sale = txtSale.getText().isEmpty() ? 0.0 : Double.parseDouble(txtSale.getText());
+                int quantity = spnQuantity.getValue();
+                int hideValue = chkHide.isSelected() ? 0 : 1;
+                String image = null;
 
-            // Lấy ProductCatalog từ ComboBox
-            String selectedCatalogName = cmbProductCatalog.getValue();
-            ProductCatalog selectedCatalog = catalogMap.get(selectedCatalogName);
+                // Lấy ProductCatalog từ ComboBox
+                String selectedCatalogName = cmbProductCatalog.getValue();
+                ProductCatalog selectedCatalog = catalogMap.get(selectedCatalogName);
 
-            int productCatalogID = selectedCatalog.getProductCatalogID();
+                int productCatalogID = selectedCatalog.getProductCatalogID();
 
-            if (!isThem) {
-                apiUrl += productID;
-            }
+                if (!isThem) {
+                    apiUrl += productID;
+                }
 
-            // Tạo đối tượng JSON chỉ chứa thông tin cần gửi
-            String requestBody = String.format(
-                    "{" +
-                            "\"productCatalogID\": %d," +
-                            "\"productName\": \"%s\"," +
-                            "\"describeProduct\": \"%s\"," +
-                            "\"image\": \"%s\"," +
-                            "\"productInformation\": \"%s\"," +
-                            "\"quantity\": %d," +
-                            "\"price\": %.2f," +
-                            "\"sale\": %.2f," +
-                            "\"hide\": %d" +
-                            "}",
-                    productCatalogID, productName, describeProduct, image, productInformation, quantity, price, sale, hideValue
-            );
+                // Tạo đối tượng JSON chỉ chứa thông tin cần gửi
+                String requestBody = String.format(
+                        "{" +
+                                "\"productCatalogID\": %d," +
+                                "\"productName\": \"%s\"," +
+                                "\"describeProduct\": \"%s\"," +
+                                "\"image\": \"%s\"," +
+                                "\"productInformation\": \"%s\"," +
+                                "\"quantity\": %d," +
+                                "\"price\": %.2f," +
+                                "\"sale\": %.2f," +
+                                "\"hide\": %d" +
+                                "}",
+                        productCatalogID, productName, describeProduct, image, productInformation, quantity, price, sale, hideValue
+                );
 
-            // Xác định phương thức HTTP
-            HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl))
-                    .header("Content-Type", "application/json")
-                    .method(isThem ? "POST" : "PATCH", HttpRequest.BodyPublishers.ofString(requestBody));
+                // Xác định phương thức HTTP
+                HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                        .uri(URI.create(apiUrl))
+                        .header("Content-Type", "application/json")
+                        .method(isThem ? "POST" : "PATCH", HttpRequest.BodyPublishers.ofString(requestBody));
 
-            // Gửi request và nhận response
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+                // Gửi request và nhận response
+                HttpClient client = HttpClient.newHttpClient();
+                HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
 
-            // Parse JSON thành ApiResponse
-            ObjectMapper objectMapper = new ObjectMapper();
-            // ApiResponse apiResponse = objectMapper.readValue(response.body(), ApiResponse.class);
+                // Parse JSON thành ApiResponse
+                ObjectMapper objectMapper = new ObjectMapper();
+                // ApiResponse apiResponse = objectMapper.readValue(response.body(), ApiResponse.class);
 
             if ((response.statusCode() == 201 && isThem) || (response.statusCode() == 200 && !isThem)) {
                 // Ánh xạ phản hồi
