@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -28,6 +29,9 @@ import java.net.http.HttpResponse;
 import static com.example.lkdientu.utils.AlertUtils.showAlert;
 
 public class LoginController {
+
+    @FXML
+    private AnchorPane ancLogin;
 
     @FXML
     private Button btnDangKy;
@@ -43,6 +47,11 @@ public class LoginController {
 
     @FXML
     private TextField txtPassword;
+
+    @FXML
+    public void initialize() {
+        ancLogin.requestFocus();
+    }
 
     @FXML
     void handleBtnDangKy(ActionEvent event) {

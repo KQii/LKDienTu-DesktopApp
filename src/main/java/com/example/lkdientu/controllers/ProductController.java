@@ -176,6 +176,7 @@ public class ProductController {
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 0);
         spnQuantity.setValueFactory(valueFactory);
 
+        // Test combobox
         cmbProductCatalog.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 ProductCatalog selectedCatalog = catalogMap.get(newValue);
@@ -272,7 +273,7 @@ public class ProductController {
     }
 
     public void fetchProductCatalogs(ComboBox<String> comboBox) {
-        String catalogApiUrl = "http://127.0.0.1:3000/api/v1/productCatalogs/"; // Thay bằng API thực tế
+        String catalogApiUrl = "http://127.0.0.1:3000/api/v1/productCatalogs/?limit=100"; // Thay bằng API thực tế
 
         try {
             // Tạo HttpClient

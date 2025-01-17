@@ -1,7 +1,6 @@
 package com.example.lkdientu.utils;
 
-import com.example.lkdientu.models.Product;
-import com.example.lkdientu.models.ProductCatalog;
+import com.example.lkdientu.models.*;
 
 import java.util.List;
 
@@ -82,6 +81,78 @@ public class ApiResponses<T> {
 
         public void setProductCatalog(ProductCatalog productCatalog) {
             this.productCatalog = productCatalog;
+        }
+    }
+
+    public static class AccountListData {
+        private List<Account> accounts;
+
+        public List<Account> getAccounts() {
+            return accounts;
+        }
+
+        public void setAccounts(List<Account> accounts) {
+            this.accounts = accounts;
+        }
+    }
+
+    public static class AccountData {
+        private Account account;
+
+        public Account getAccount() {
+            return account;
+        }
+
+        public void setAccount(Account account) {
+            this.account = account;
+        }
+    }
+
+    public static class RoleListData {
+        private List<Role> roles;
+
+        public List<Role> getRoles() {
+            return roles;
+        }
+
+        public void setRoles(List<Role> roles) {
+            this.roles = roles;
+        }
+    }
+
+    public static class RoleData {
+        private Role role;
+
+        public Role getRole() {
+            return role;
+        }
+
+        public void setRole(Role role) {
+            this.role = role;
+        }
+    }
+
+    public static class InfoListData {
+        private List<Info> infos;
+
+        public List<Info> getInfos() {
+            return infos;
+        }
+
+        public void setInfos(List<Info> infos) {
+            this.infos = infos;
+        }
+    }
+
+    public static class InfoData {
+        private Info info;
+
+        public Info getInfo() {
+            return info;
+        }
+
+        public void setInfo(Info info) {
+            this.info = info;
         }
     }
 }
